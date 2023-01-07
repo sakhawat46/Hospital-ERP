@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from hospital_app.email_backend import EmailBackend
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from hospital_app.models import CustomUser
+from hospital_app.models import CustomUser, Patient
 
 from django.contrib import messages
 
@@ -86,4 +86,24 @@ def profile_update(request):
 
 @login_required(login_url='/')
 def patient_add(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        mobile_number = request.POST.get('mobile_number')
+        age = request.POST.get('age')
+        gender = request.POST.get('gender')
+        address = request.POST.get('address')
+
+        form = Patient(
+            name = name,
+            mobile_number = mobile_number,
+            age = age,
+            gender = gender,
+            address = address
+        )
+
+        form.save()
+
+        messages.success(request, "Your Profile Update Successfully.")
+        return redirect('patient_add')
+
     return render(request, 'hod/patient_registration.html')
